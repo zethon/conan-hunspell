@@ -25,7 +25,10 @@ class LibHunspellConan(ConanFile):
         
         replace_in_file("msvc\\libhunspell.vcxproj", "v140_xp", "v140")
         msbuild = MSBuild(self)
-        msbuild.build("msvc\\Hunspell.sln", targets=["libhunspell"])
+        build_type = None
+        if self.options.shared:
+            build_type = {"Release":"Release_dll", "Debug":"Debug_dll"}[str(self.settings.build_type)]
+        msbuild.build("msvc\\Hunspell.sln", targets=["libhunspell"], build_type=build_type, platforms={"x86":"Win32"})
         
     def package(self):
         for h in ["hunspell.hxx", "hunspell.h", "hunvisapi.h", "w_char.hxx", "atypes.hxx"]:
