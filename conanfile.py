@@ -7,7 +7,7 @@ class LibHunspellConan(ConanFile):
     name = "libhunspell"
     description = "libhunspell from Hunspell project"
     version = "1.6.2"
-    license = "GPL 2"
+    license = "MPL 1.1, LGPL 2.1, GPL 2"
     url = "https://github.com/hunspell/hunspell.git"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True,False]}
