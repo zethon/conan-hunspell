@@ -48,6 +48,7 @@ class LibHunspellConan(ConanFile):
             for h in ["hunspell.hxx", "hunspell.h", "hunvisapi.h", "w_char.hxx", "atypes.hxx"]:
                 self.copy(h, dst="include/hunspell", src="src/hunspell")            
             self.copy("*libhunspell-1.6.a", dst="lib", keep_path=False)
+            self.copy("*libhunspell.a", dst="lib", keep_path=False)
         
     def package_info(self):
         if self.settings.compiler == "Visual Studio":
