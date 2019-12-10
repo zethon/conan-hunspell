@@ -1,13 +1,13 @@
 import os
 import conans
 
-from conans import ConanFile, tools, MSBuild
+from conans import ConanFile, CMake, tools, MSBuild, AutoToolsBuildEnvironment
 from conans.tools import replace_in_file
 
 class LibHunspellConan(ConanFile):
     name = "libhunspell"
     description = "libhunspell from Hunspell project"
-    version = "1.6.2"
+    version = "1.7.0"
     license = "MPL 1.1, LGPL 2.1, GPL 2"
     url = "https://github.com/hunspell/hunspell.git"
     settings = "os", "compiler", "build_type", "arch"
@@ -20,6 +20,17 @@ class LibHunspellConan(ConanFile):
         "revision": "89d1084f1760c2cdbe1b636eb1cdc15e6f3ac519" # 1.6.2 + fixes
     }
 
+    def source(self):
+        archive_name = "hunspell-%s.zip" % self.version
+        url = "https://github.com/hunspell/hunspell/archive/v%s.zip" % self.version
+        self.output.info("Downloading %s to..." % url)
+        # self.output.info("Saving to %s ..." % archive_name)
+        tools.download(url, archive_name)
+        tools.unzip(archive_name)
+        os.unlink(archive_name)
+        os.rename("hunspell-%s" % self.version, "source")
+        
+
     def build(self):
         if self.settings.compiler == "Visual Studio":
             replace_in_file("msvc\\libhunspell.vcxproj", "v140_xp", "v140")
@@ -29,9 +40,11 @@ class LibHunspellConan(ConanFile):
                 build_type = {"Release":"Release_dll", "Debug":"Debug_dll"}[str(self.settings.build_type)]
             msbuild.build("msvc\\Hunspell.sln", targets=["libhunspell"], build_type=build_type, platforms={"x86":"Win32"})
         elif self.settings.compiler == "apple-clang":
-            self.run("autoreconf -vfi")
-            self.run("configure")
-            self.run("make")
+            with tools.chdir("source"):
+                self.run("autoreconf --verbose --install --force")
+                env_build = AutoToolsBuildEnvironment(self)
+                env_build.configure()
+                env_build.make()
         else:
             raise str("Compiler " + str(self.settings.compiler) + " not supported")
 
