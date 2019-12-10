@@ -14,7 +14,7 @@ class LibHunspellConan(ConanFile):
     options = {"shared": [True,False]}
     default_options = "shared=False"
 
-    scm = {"revision": "89d1084f1760c2cdbe1b636eb1cdc15e6f3ac519",
+    scm = {"revision": "4ddd8ed5ca6484b930b111aec50c2750a6119a0f",
            "type": "git",
            "url": "https://github.com/hunspell/hunspell.git"}
 
